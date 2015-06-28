@@ -2,9 +2,9 @@ package com.alevlash.smscommander.action;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.MediaPlayer;
+
+import com.alevlash.smscommander.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,19 +12,23 @@ import java.util.TimerTask;
 public class AlarmAction implements Action {
     @Override
     public void execute(ActionRequest actionRequest) {
-        final Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        final Ringtone ringtone = RingtoneManager.getRingtone(actionRequest.getContext(), alert);
         final AudioManager audioManager = (AudioManager)actionRequest.getContext().getSystemService(Context.AUDIO_SERVICE);
-        final int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        final int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        final MediaPlayer mediaPlayer = MediaPlayer.create(actionRequest.getContext(), R.raw.siren_noise);
 
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
-        ringtone.play();
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start(); // no need to call prepare(); create() does that for you
 
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, currentVolume, 0);
-                ringtone.stop();
+                try {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0);
+                    mediaPlayer.stop();
+                } finally {
+                    mediaPlayer.release();
+                }
             }
         };
         Timer timer = new Timer();

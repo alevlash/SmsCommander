@@ -12,8 +12,8 @@ import java.util.TimerTask;
 public class AlarmAction implements Action {
     @Override
     public void execute(ActionRequest actionRequest) {
-        final AudioManager audioManager = (AudioManager)actionRequest.getContext().getSystemService(Context.AUDIO_SERVICE);
-        final int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        final AudioManager audioManager = (AudioManager) actionRequest.getContext().getSystemService(Context.AUDIO_SERVICE);
+        final int originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         final MediaPlayer mediaPlayer = MediaPlayer.create(actionRequest.getContext(), R.raw.siren_noise);
 
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
@@ -23,16 +23,20 @@ public class AlarmAction implements Action {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0);
-                    mediaPlayer.stop();
-                } finally {
-                    mediaPlayer.release();
-                }
+                stopMediaPlayer(audioManager, mediaPlayer, originalVolume);
             }
         };
         Timer timer = new Timer();
         timer.schedule(task, 1000 * 60);
-
     }
+
+    private void stopMediaPlayer(final AudioManager audioManager, final MediaPlayer mediaPlayer, final int originalVolume) {
+        try {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+            mediaPlayer.stop();
+        } finally {
+            mediaPlayer.release();
+        }
+    }
+
 }

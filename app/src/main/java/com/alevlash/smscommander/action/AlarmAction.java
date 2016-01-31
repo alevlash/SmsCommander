@@ -30,7 +30,7 @@ public class AlarmAction implements Action {
         timer.schedule(task, 1000 * 60);
     }
 
-    private void stopMediaPlayer(final AudioManager audioManager, final MediaPlayer mediaPlayer, final int originalVolume) {
+    void stopMediaPlayer(final AudioManager audioManager, final MediaPlayer mediaPlayer, final int originalVolume) {
         try {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
             mediaPlayer.stop();

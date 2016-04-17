@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.alevlash.smscommander.R;
 import com.alevlash.smscommander.action.Action;
@@ -35,8 +36,8 @@ public class AlarmAction implements Action {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                stopMediaPlayer(playerData);
                 actionRequest.getContext().getApplicationContext().unregisterReceiver(buttonEventReceiver);
+                stopMediaPlayer(playerData);
 
             }
         };
@@ -48,13 +49,17 @@ public class AlarmAction implements Action {
     }
 
     void stopMediaPlayer(PlayerData playerData) {
-        if (playerData.getMediaPlayer().isPlaying()) {
-            try {
-                playerData.getMediaPlayer().stop();
-                playerData.getAudioManager().setStreamVolume(AudioManager.STREAM_MUSIC, playerData.getOriginalVolume(), 0);
-            } finally {
-                playerData.getMediaPlayer().release();
+        try {
+            if (playerData.getMediaPlayer().isPlaying()) {
+                try {
+                    playerData.getMediaPlayer().stop();
+                    playerData.getAudioManager().setStreamVolume(AudioManager.STREAM_MUSIC, playerData.getOriginalVolume(), 0);
+                } finally {
+                    playerData.getMediaPlayer().release();
+                }
             }
+        } catch (IllegalStateException e) {
+            Log.i("AlarmAction", "Media player has been already released: " + e);
         }
     }
 

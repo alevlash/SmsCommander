@@ -53,4 +53,17 @@ public class AlarmActionTest extends TestCase {
         Mockito.verify(_mediaPlayer, times(0)).release();
     }
 
+    @Test
+    public void stopMediaPlayer_mediaAlreadyReleased_doesNothing() throws Exception {
+        Mockito.when(_mediaPlayer.isPlaying()).thenThrow(IllegalStateException.class);
+
+        _alarmAction.stopMediaPlayer(_playerData);
+
+        Mockito.verify(_audioManager, times(0)).setStreamVolume(AudioManager.STREAM_MUSIC, _playerData.getOriginalVolume(), 0);
+        Mockito.verify(_mediaPlayer, times(0)).stop();
+        Mockito.verify(_mediaPlayer, times(0)).release();
+    }
+
+
+
 }

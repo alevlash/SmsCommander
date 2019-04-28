@@ -1,7 +1,6 @@
 package com.alevlash.smscommander;
 
 import android.app.Application;
-import android.content.Context;
 import android.test.ApplicationTestCase;
 
 /**

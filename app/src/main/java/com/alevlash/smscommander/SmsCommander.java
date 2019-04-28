@@ -84,7 +84,7 @@ public class SmsCommander extends BroadcastReceiver {
     }
 
     String getContactDisplayNameByNumber(String number, Context context) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+        Uri uri = getUri(number);
         String name = null;
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -102,6 +102,10 @@ public class SmsCommander extends BroadcastReceiver {
         }
 
         return name;
+    }
+
+    Uri getUri(String number) {
+        return Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
     }
 
 }

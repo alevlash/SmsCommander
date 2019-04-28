@@ -27,7 +27,7 @@ public class AlarmActionTest extends TestCase {
 
     @Before
     public void setup() throws Exception {
-        _alarmAction = new AlarmAction();
+        _alarmAction = Mockito.spy(new AlarmAction());
         _playerData = new PlayerData(_audioManager, _mediaPlayer, 5);
     }
 
@@ -55,7 +55,10 @@ public class AlarmActionTest extends TestCase {
 
     @Test
     public void stopMediaPlayer_mediaAlreadyReleased_doesNothing() throws Exception {
-        Mockito.when(_mediaPlayer.isPlaying()).thenThrow(IllegalStateException.class);
+        IllegalStateException exception = new IllegalStateException();
+
+        Mockito.when(_mediaPlayer.isPlaying()).thenThrow(exception);
+        Mockito.doNothing().when(_alarmAction).logInfo(exception);
 
         _alarmAction.stopMediaPlayer(_playerData);
 
@@ -63,7 +66,5 @@ public class AlarmActionTest extends TestCase {
         Mockito.verify(_mediaPlayer, times(0)).stop();
         Mockito.verify(_mediaPlayer, times(0)).release();
     }
-
-
 
 }

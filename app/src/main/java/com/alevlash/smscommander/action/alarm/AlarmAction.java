@@ -59,8 +59,12 @@ public class AlarmAction implements Action {
                 }
             }
         } catch (IllegalStateException e) {
-            Log.i("AlarmAction", "Media player has been already released: " + e);
+            logInfo(e);
         }
+    }
+
+    void logInfo(IllegalStateException e) {
+        Log.i("AlarmAction", "Media player has been already released: " + e);
     }
 
 }

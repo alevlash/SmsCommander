@@ -2,6 +2,18 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
+    debug {
+        storeFile file('/home/dima/keystores/keystore.jks')
+        storePassword 'Rubicon0'
+        keyAlias = 'upload'
+        keyPassword 'Rubicon0'
+    }
+        release {
+            storeFile file('/home/dima/keystores/keystore.jks')
+            storePassword 'Rubicon0'
+            keyAlias = 'upload'
+            keyPassword 'Rubicon0'
+        }
     }
     compileSdkVersion 26
     buildToolsVersion '22.0.1'
@@ -12,6 +24,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {

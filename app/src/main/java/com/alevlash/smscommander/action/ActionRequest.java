@@ -2,14 +2,18 @@ package com.alevlash.smscommander.action;
 
 import android.content.Context;
 
+import com.alevlash.smscommander.connection.ConnectionService;
+
 public class ActionRequest {
 
     private Context _context;
     private String _phoneNumber;
+    private ConnectionService _connectionService;
 
     private ActionRequest(Builder builder) {
         _context = builder._context;
         _phoneNumber = builder._phoneNumber;
+        _connectionService = builder._connectionService;
     }
 
     public Context getContext() {
@@ -20,6 +24,10 @@ public class ActionRequest {
         return _phoneNumber;
     }
 
+    public ConnectionService getConnectionService() {
+        return _connectionService;
+    }
+
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -28,6 +36,7 @@ public class ActionRequest {
 
         private Context _context;
         private String _phoneNumber;
+        private ConnectionService _connectionService;
 
         private Builder() {
         }
@@ -39,6 +48,11 @@ public class ActionRequest {
 
         public Builder setPhoneNumber(String phoneNumber) {
             _phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public Builder setConnectionService(ConnectionService connectionService) {
+            _connectionService = connectionService;
             return this;
         }
 

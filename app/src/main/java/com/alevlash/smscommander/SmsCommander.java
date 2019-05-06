@@ -15,6 +15,7 @@ import android.util.Log;
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
 import com.alevlash.smscommander.action.ActionResolver;
+import com.alevlash.smscommander.connection.ConnectionServiceFactory;
 
 public class SmsCommander extends BroadcastReceiver {
 
@@ -63,7 +64,7 @@ public class SmsCommander extends BroadcastReceiver {
             }
 
         } catch (Exception e) {
-            Log.e("SmsReceiver", "Exception smsReceiver" + e);
+            Log.e("SmsCommander", "Exception smsCommander" + e);
 
         }
 
@@ -72,11 +73,12 @@ public class SmsCommander extends BroadcastReceiver {
     private void handleCommand(Context context, String phoneNumber, String message) {
         try {
             Action action = _actionResolver.getAction(_commandParser.getCommand(message));
-
             ActionRequest actionRequest = ActionRequest.newBuilder()
                     .setContext(context)
                     .setPhoneNumber(phoneNumber)
+                    .setConnectionService(new ConnectionServiceFactory().getConnectionService(_smsManager, phoneNumber))
                     .build();
+
             action.execute(actionRequest);
         } catch (IllegalArgumentException e) {
             _smsManager.sendTextMessage(phoneNumber, null, e.getMessage(), null, null);

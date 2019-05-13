@@ -14,7 +14,7 @@ public class SmsConnectionService implements ConnectionService {
 
     @Override
     public void sendResponse(String text) {
-        _smsManager.sendTextMessage(_destinationAddress, null, "SmsCommander: " + text, null, null);
+        _smsManager.sendTextMessage(_destinationAddress, null, text, null, null);
     }
 
 }

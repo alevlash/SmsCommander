@@ -36,7 +36,7 @@ public class LocateAction implements Action {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            actionRequest.getConnectionService().sendResponse(location.toString());
+                            actionRequest.getConnectionService().sendResponse(String.format(" %.6f,%.6f", location.getLatitude(), location.getLongitude()));
                             Log.i("SmsCommander", "Location returned: " + location.toString());
                         } else {
                             Log.e("SmsCommander", "No location returned");

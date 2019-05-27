@@ -36,22 +36,21 @@ public class LocateAction implements Action {
                     public void onSuccess(Location location) {
                         if (location != null) {
                             actionRequest.getConnectionService().sendResponse(String.format(" %.6f,%.6f", location.getLatitude(), location.getLongitude()));
-                            Log.i("SmsCommander", "Location returned: " + location.toString());
+                            Log.i("SmsCommander", "Last location returned: " + location.toString());
                         } else {
-                            Log.e("SmsCommander", "No location returned, trying again");
-                            actionRequest.getConnectionService().sendResponse("No location returned, trying again");
-
                             if (ActivityCompat.checkSelfPermission(actionRequest.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 Log.e("SmsCommander", "No permission for " + Manifest.permission.ACCESS_FINE_LOCATION);
-                                actionRequest.getConnectionService().sendResponse(Manifest.permission.ACCESS_FINE_LOCATION);
+                                actionRequest.getConnectionService().sendResponse("No permission for " + Manifest.permission.ACCESS_FINE_LOCATION);
                                 return;
                             }
                             LocationManager locationManager = (LocationManager) actionRequest.getContext().getSystemService(Context.LOCATION_SERVICE);
+                            Log.e("SmsCommander", "No location returned, trying again");
+                            actionRequest.getConnectionService().sendResponse("No location returned, trying again");
                             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
                                         @Override
                                         public void onLocationChanged(Location location) {
                                             actionRequest.getConnectionService().sendResponse(String.format(" %.6f,%.6f", location.getLatitude(), location.getLongitude()));
-                                            Log.i("SmsCommander", "Location returned: " + location.toString());
+                                            Log.i("SmsCommander", "GPS location returned: " + location.toString());
                                         }
 
                                         @Override

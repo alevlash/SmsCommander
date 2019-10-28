@@ -35,7 +35,7 @@ public class LocateAction implements Action {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            actionRequest.getConnectionService().sendResponse(String.format(" %.6f,%.6f", location.getLatitude(), location.getLongitude()));
+                            actionRequest.getConnectionService().sendResponse(getLocationText(location));
                             Log.i("SmsCommander", "Last location returned: " + location.toString());
                         } else {
                             if (ActivityCompat.checkSelfPermission(actionRequest.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -49,7 +49,7 @@ public class LocateAction implements Action {
                             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
                                         @Override
                                         public void onLocationChanged(Location location) {
-                                            actionRequest.getConnectionService().sendResponse(String.format(" %.6f,%.6f", location.getLatitude(), location.getLongitude()));
+                                            actionRequest.getConnectionService().sendResponse(getLocationText(location));
                                             Log.i("SmsCommander", "GPS location returned: " + location.toString());
                                         }
 
@@ -76,6 +76,10 @@ public class LocateAction implements Action {
                         actionRequest.getConnectionService().sendResponse(e.getMessage());
                     }
                 });
+    }
+
+    private String getLocationText(Location location) {
+        return "https://www.google.com/maps/search/?api=1&query=" + String.format("%.6f,%.6f", location.getLatitude(), location.getLongitude());
     }
 
 }

@@ -15,6 +15,8 @@ import android.util.Log;
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
 import com.alevlash.smscommander.action.ActionResolver;
+import com.alevlash.smscommander.commandparser.CommandParser;
+import com.alevlash.smscommander.commandparser.ParsedCommand;
 import com.alevlash.smscommander.connection.ConnectionServiceFactory;
 
 public class SmsCommander extends BroadcastReceiver {
@@ -72,11 +74,13 @@ public class SmsCommander extends BroadcastReceiver {
 
     private void handleCommand(Context context, String phoneNumber, String message) {
         try {
-            Action action = _actionResolver.getAction(_commandParser.getCommand(message));
+            ParsedCommand parsedCommand = _commandParser.getCommand(message);
+            Action action = _actionResolver.getAction(parsedCommand.getCommand());
             ActionRequest actionRequest = ActionRequest.newBuilder()
                     .setContext(context)
                     .setPhoneNumber(phoneNumber)
                     .setConnectionService(new ConnectionServiceFactory().getConnectionService(_smsManager, phoneNumber))
+                    .setParameterMap(parsedCommand.getParametersMap())
                     .build();
 
             action.execute(actionRequest);

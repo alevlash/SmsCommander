@@ -79,7 +79,8 @@ public class LocateAction implements Action {
     }
 
     private String getLocationText(Location location) {
-        return "https://www.google.com/maps/search/?api=1&query=" + String.format("%.6f,%.6f", location.getLatitude(), location.getLongitude());
+//        return "https://www.google.com/maps/search/?api=1&query=" + String.format("%.6f,%.6f", location.getLatitude(), location.getLongitude());
+        return ".do:showLocation?location=" + String.format("%.6f,%.6f", location.getLatitude(), location.getLongitude());
     }
 
 }

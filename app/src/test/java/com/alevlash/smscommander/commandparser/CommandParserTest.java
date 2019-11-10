@@ -4,10 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CommandParserTest {
 
     private CommandParser _commandParser;
@@ -72,6 +69,13 @@ public class CommandParserTest {
         Assert.assertEquals("blabla", parsedCommand.getCommand());
         Assert.assertEquals(1, parsedCommand.getParametersMap().size());
         Assert.assertEquals("", parsedCommand.getParametersMap().get("param"));
+    }
+
+    @Test
+    public void getCommand_commandWithoutAction_returnsParsedCommand() {
+        ParsedCommand parsedCommand = _commandParser.getCommand(".do:");
+        Assert.assertEquals("", parsedCommand.getCommand());
+        Assert.assertEquals(0, parsedCommand.getParametersMap().size());
     }
 
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
+import com.alevlash.smscommander.commandparser.CommandConstants;
 
 public class ShowLocation implements Action {
 
@@ -13,7 +14,8 @@ public class ShowLocation implements Action {
     public void execute(ActionRequest actionRequest) {
 
         // Create a Uri from an intent string. Use the result to create an Intent.
-        Uri gmmIntentUri = Uri.parse("geo:" + actionRequest.getParametersMap().get("location"));
+        String locationString = actionRequest.getParametersMap().get(CommandConstants.LOCATION_PARAM);
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + locationString);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(actionRequest.getContext().getPackageManager()) != null) {

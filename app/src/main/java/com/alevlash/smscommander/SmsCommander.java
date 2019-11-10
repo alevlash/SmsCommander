@@ -15,6 +15,7 @@ import android.util.Log;
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
 import com.alevlash.smscommander.action.ActionResolver;
+import com.alevlash.smscommander.action.IllegalCommand;
 import com.alevlash.smscommander.commandparser.CommandParser;
 import com.alevlash.smscommander.commandparser.ParsedCommand;
 import com.alevlash.smscommander.connection.ConnectionServiceFactory;
@@ -47,9 +48,10 @@ public class SmsCommander extends BroadcastReceiver {
 
                 final Object[] pdusObj = (Object[]) bundle.get("pdus");
 
-                for (int i = 0; i < pdusObj.length; i++) {
+                assert pdusObj != null;
+                for (Object pdu : pdusObj) {
 
-                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdu);
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
                     String message = currentMessage.getDisplayMessageBody();
                     String name = getContactDisplayNameByNumber(phoneNumber, context);
@@ -84,7 +86,7 @@ public class SmsCommander extends BroadcastReceiver {
                     .build();
 
             action.execute(actionRequest);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalCommand e) {
             _smsManager.sendTextMessage(phoneNumber, null, e.getMessage(), null, null);
         }
     }

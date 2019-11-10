@@ -15,6 +15,9 @@ import android.util.Log;
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
 import com.alevlash.smscommander.action.ActionResolver;
+import com.alevlash.smscommander.action.IllegalCommand;
+import com.alevlash.smscommander.commandparser.CommandParser;
+import com.alevlash.smscommander.commandparser.ParsedCommand;
 import com.alevlash.smscommander.connection.ConnectionServiceFactory;
 
 public class SmsCommander extends BroadcastReceiver {
@@ -45,9 +48,10 @@ public class SmsCommander extends BroadcastReceiver {
 
                 final Object[] pdusObj = (Object[]) bundle.get("pdus");
 
-                for (int i = 0; i < pdusObj.length; i++) {
+                assert pdusObj != null;
+                for (Object pdu : pdusObj) {
 
-                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdu);
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
                     String message = currentMessage.getDisplayMessageBody();
                     String name = getContactDisplayNameByNumber(phoneNumber, context);
@@ -72,15 +76,17 @@ public class SmsCommander extends BroadcastReceiver {
 
     private void handleCommand(Context context, String phoneNumber, String message) {
         try {
-            Action action = _actionResolver.getAction(_commandParser.getCommand(message));
+            ParsedCommand parsedCommand = _commandParser.getCommand(message);
+            Action action = _actionResolver.getAction(parsedCommand.getCommand());
             ActionRequest actionRequest = ActionRequest.newBuilder()
                     .setContext(context)
                     .setPhoneNumber(phoneNumber)
                     .setConnectionService(new ConnectionServiceFactory().getConnectionService(_smsManager, phoneNumber))
+                    .setParameterMap(parsedCommand.getParametersMap())
                     .build();
 
             action.execute(actionRequest);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalCommand e) {
             _smsManager.sendTextMessage(phoneNumber, null, e.getMessage(), null, null);
         }
     }

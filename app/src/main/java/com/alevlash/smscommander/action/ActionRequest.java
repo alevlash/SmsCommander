@@ -4,16 +4,20 @@ import android.content.Context;
 
 import com.alevlash.smscommander.connection.ConnectionService;
 
+import java.util.Map;
+
 public class ActionRequest {
 
     private Context _context;
     private String _phoneNumber;
     private ConnectionService _connectionService;
+    private Map<String, String> _parametersMap;
 
     private ActionRequest(Builder builder) {
         _context = builder._context;
         _phoneNumber = builder._phoneNumber;
         _connectionService = builder._connectionService;
+        _parametersMap = builder._parametersMap;
     }
 
     public Context getContext() {
@@ -28,6 +32,10 @@ public class ActionRequest {
         return _connectionService;
     }
 
+    public Map<String, String> getParametersMap() {
+        return _parametersMap;
+    }
+
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -37,6 +45,7 @@ public class ActionRequest {
         private Context _context;
         private String _phoneNumber;
         private ConnectionService _connectionService;
+        private Map<String, String> _parametersMap;
 
         private Builder() {
         }
@@ -53,6 +62,11 @@ public class ActionRequest {
 
         public Builder setConnectionService(ConnectionService connectionService) {
             _connectionService = connectionService;
+            return this;
+        }
+
+        public Builder setParameterMap(Map<String, String> parameterMap) {
+            _parametersMap = parameterMap;
             return this;
         }
 

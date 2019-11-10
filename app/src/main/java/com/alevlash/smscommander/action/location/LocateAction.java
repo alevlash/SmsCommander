@@ -8,11 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.alevlash.smscommander.action.Action;
 import com.alevlash.smscommander.action.ActionRequest;
+import com.alevlash.smscommander.action.ActionType;
+import com.alevlash.smscommander.commandparser.CommandConstants;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,7 +38,7 @@ public class LocateAction implements Action {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            actionRequest.getConnectionService().sendResponse(getLocationText(location));
+                            actionRequest.getConnectionService().sendResponse(getResponseText(location));
                             Log.i("SmsCommander", "Last location returned: " + location.toString());
                         } else {
                             if (ActivityCompat.checkSelfPermission(actionRequest.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -46,10 +49,11 @@ public class LocateAction implements Action {
                             LocationManager locationManager = (LocationManager) actionRequest.getContext().getSystemService(Context.LOCATION_SERVICE);
                             Log.e("SmsCommander", "No location returned, trying again");
                             actionRequest.getConnectionService().sendResponse("No location returned, trying again");
+                            assert locationManager != null;
                             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
                                         @Override
                                         public void onLocationChanged(Location location) {
-                                            actionRequest.getConnectionService().sendResponse(getLocationText(location));
+                                            actionRequest.getConnectionService().sendResponse(getResponseText(location));
                                             Log.i("SmsCommander", "GPS location returned: " + location.toString());
                                         }
 
@@ -71,15 +75,21 @@ public class LocateAction implements Action {
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(Exception e) {
+                    public void onFailure(@NonNull Exception e) {
                         Log.e("SmsCommander", "Exception on getLastLocation: " + e);
                         actionRequest.getConnectionService().sendResponse(e.getMessage());
                     }
                 });
     }
 
-    private String getLocationText(Location location) {
-        return "https://www.google.com/maps/search/?api=1&query=" + String.format("%.6f,%.6f", location.getLatitude(), location.getLongitude());
+    String getResponseText(Location location) {
+        return String.format(CommandConstants.SMS_COMMAND +
+                        ActionType.SHOWLOCATION.name().toLowerCase() +
+                        CommandConstants.PARAMS_START +
+                        CommandConstants.LOCATION_PARAM +
+                        CommandConstants.PARAM_VALUE_DIVIDER +
+                        "%.6f,%.6f",
+                location.getLatitude(), location.getLongitude());
     }
 
 }
